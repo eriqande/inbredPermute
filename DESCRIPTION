@@ -1,0 +1,16 @@
+Package: inbreedPermute
+Type: Package
+Title: Simple permutation procedures for distributions of rxy values amongst parents
+Version: 0.0
+Date: 2014-07-14
+Author: Eric C. Anderson
+Maintainer: Eric C. Anderson <eric.anderson@noaa.gov>
+Description: ADD_DESCRIPTION
+License: Public Domain
+LazyData: true
+Roxygen: list(wrap = FALSE)
+Suggests:
+    testthat,
+    knitr
+VignetteBuilder: knitr
+Imports:
