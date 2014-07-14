@@ -1,6 +1,7 @@
-Package: inbreedPermute
+Package: inbredPermute
 Type: Package
-Title: Simple permutation procedures for distributions of rxy values amongst parents
+Title: Simple permutation procedures for distributions of rxy values amongst
+    parents
 Version: 0.0
 Date: 2014-07-14
 Author: Eric C. Anderson
@@ -14,3 +15,4 @@ Suggests:
     knitr
 VignetteBuilder: knitr
 Imports:
+    
