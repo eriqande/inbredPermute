@@ -38,7 +38,6 @@ read_kingroup <- function(file, ...) {
 
 
 
-
 #' Read in kingroup results from the raw kingroup CSV format
 #' 
 #' This assumes that the file is just a CSV file that Kingroup produced
@@ -92,8 +91,4 @@ read_kingroup_csv <- function(file, ItalianCommas = FALSE)  {
   x
   
 }
-
-
-
-
 
