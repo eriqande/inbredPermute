@@ -22,8 +22,9 @@ The basic idea here is that we should be able to proceed directly with two ingre
     ```
 
 1. A list of trios that were found in the population, that include offspring whose
-    parents are the ones that were included in the kingroup analysis.  The columns have to
-    be named `ma`, `pa`, and `kid`.  Here is an example:
+    parents are the ones that were included in the kingroup analysis.  I must have three columns
+    that are named `Ma`, `Pa`, and `Kid` (which _are_ case-sensitive), and it can have any other columns
+    that you might happen to have in there, too.  Here is an example:
     ```{r head-trio, echo=FALSE, comment=NA}
     cat(readLines(system.file("data_files/MKHM_trios.txt", package="inbredPermute", mustWork = T), n = 10), sep="\n")
     ```
@@ -31,7 +32,7 @@ The basic idea here is that we should be able to proceed directly with two ingre
 
 
 
-Note where we are in going through a simple MKMH example:
+Note where we are in going through a simple MKMH example.  Eventually we will roll this into a function.
 ```{r}
 library(inbredPermute)  # load the package
 
@@ -39,7 +40,7 @@ library(inbredPermute)  # load the package
 rxy <- read_kingroup_csv(system.file("data_files/MKHM_kingroup_output.csv", package="inbredPermute", mustWork = T), ItalianCommas = TRUE)
 
 # make a matrix of pairs that produced offspring that we found
-trios <- read.table(system.file("data_files/MKHM_trios.txt", package="inbredPermute", mustWork = T), header = T, sep="\t", stringsAsFactors=F)
+trios <- read.table(system.file("data_files/MKHM_trios.txt", package="inbredPermute", mustWork = T), header = T, stringsAsFactors=F)
 
 # get their rxy values
 mapa <- as.matrix(cbind(trios$Pa, trios$Ma))  # names of observed parents
