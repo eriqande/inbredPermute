@@ -42,7 +42,8 @@ read_kingroup <- function(file, ...) {
 #' 
 #' This assumes that the file is just a CSV file that Kingroup produced
 #' of Rxy values.
-#' @param file  The Kingroup CSV output file
+#' @param file  The Kingroup CSV output file.   Note: you cannot have spaces in individual
+#' IDs and expect this to work.
 #' @param ItalianCommas  Logical.  True if we need to convert decimal commas to decimal periods. 
 #' Named this in honor of our delightful Italian visitor David who had crazy commas in his numbers!
 #' @export

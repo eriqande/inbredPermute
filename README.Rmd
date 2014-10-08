@@ -1,4 +1,9 @@
-# README
+---
+title: "README"
+output: 
+  html_document:
+    keep_md: true
+---
 
 ## inbredPermute
 
@@ -12,41 +17,22 @@ The basic idea here is that we should be able to proceed directly with two ingre
 
 1. A raw kingroup output file that includes $r_{xy}$ values.  The top of that file should
     look something like this:
-    
-    ```
-    *, This is the results file [in KINSHIP format] of KINGROUP v2_090501
-    *, Saved at 21:41  gio lug 17 2014
-    *, Column delimiter: comma
-    *, Last saved file: Asus\Desktop\MKHM_kingroup_output
-    *, Last imported file: CVB11_12_13_14\NEW\MKHM_kingroup_input.txt
-    *, Population
-    *,  
-    *, ALLELE FREQUENCY BLOCK
+    ```{r head-kingroup, echo=FALSE, comment=NA}
+    cat(readLines(system.file("data_files/MKHM_kingroup_output.csv", package="inbredPermute", mustWork = T), n = 8), sep="\n")
     ```
 
 1. A list of trios that were found in the population, that include offspring whose
     parents are the ones that were included in the kingroup analysis.  The columns have to
     be named `ma`, `pa`, and `kid`.  Here is an example:
-    
-    ```
-    Kid	Pa	Ma	FDR
-    MKHM130030	MKHM100016	MKHM100015	0
-    MKHM130031	MKHM110070	MKHM110046	0.001045
-    MKHM130035	MKHM110008	MKHM110007	0
-    MKHM130037	MKHM110060	MKHM110059	0
-    MKHM130041	MKHM100065	MKHM100064	0
-    MKHM130042	MKHM110035	MKHM110034	0
-    MKHM130043	MKHM110086	MKHM110078	0.000024
-    MKHM130044	MKHM110076	MKHM110077	0
-    MKHM130045	MKHM100009	MKHM100008	0
+    ```{r head-trio, echo=FALSE, comment=NA}
+    cat(readLines(system.file("data_files/MKHM_trios.txt", package="inbredPermute", mustWork = T), n = 10), sep="\n")
     ```
 
 
 
 
 Note where we are in going through a simple MKMH example:
-
-```r
+```{r}
 library(inbredPermute)  # load the package
 
 # read the rxy values

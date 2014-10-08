@@ -6,7 +6,8 @@
 read_kingroup_csv(file, ItalianCommas = FALSE)
 }
 \arguments{
-\item{file}{The Kingroup CSV output file}
+\item{file}{The Kingroup CSV output file.   Note: you cannot have spaces in individual
+IDs and expect this to work.}
 
 \item{ItalianCommas}{Logical.  True if we need to convert decimal commas to decimal periods.
 Named this in honor of our delightful Italian visitor David who had crazy commas in his numbers!}
