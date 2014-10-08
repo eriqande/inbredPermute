@@ -31,7 +31,6 @@ The basic idea here is that we should be able to proceed directly with two ingre
 
 
 
-
 Note where we are in going through a simple MKMH example.  Eventually we will roll this into a function.
 ```{r}
 library(inbredPermute)  # load the package
