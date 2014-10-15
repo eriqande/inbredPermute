@@ -3,7 +3,8 @@
 \alias{do_the_perms}
 \title{function to do the permutations}
 \usage{
-do_the_perms(kg_file, trio_file, meta_file, REPS = 1000)
+do_the_perms(kg_file, trio_file, meta_file, REPS = 1000,
+  ItalianCommas = FALSE)
 }
 \description{
 function to do the permutations

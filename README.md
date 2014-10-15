@@ -57,103 +57,53 @@ The basic idea here is that we should be able to proceed directly with two ingre
     MKHM100009	Male	12/16/10
     ```
 
-Note where we are in going through a simple MKMH example.  Eventually we will roll this into a function.
+Then, to run the function you would do something like:
 
 ```r
-library(inbredPermute)  # load the package
-
-
-# read the rxy values
-rxy <- read_kingroup_csv(system.file("data_files/MKHM_kingroup_output.csv", package="inbredPermute", mustWork = T), ItalianCommas = TRUE)
-
-# make a matrix of pairs that produced offspring that we found
-# we make a matrix because we will use it to subset another matrix...
-trios <- read.table(system.file("data_files/MKHM_trios.txt", package="inbredPermute", mustWork = T), header = T, stringsAsFactors=F)
-
-# get their rxy values
-mapa <- as.matrix(cbind(trios$Pa, trios$Ma))  # names of observed parents
-colnames(mapa) <- c("Pa", "Ma")
-
-# these are the parents we have rxy for:
-havem <- (mapa[, 1] %in% rownames(rxy)) & (mapa[, 2] %in% rownames(rxy))
-mapa_have <- mapa[havem, ]
-
-# and here we pick out their rxy's
-mapa_rxy <- rxy[mapa_have]
-    
-# put those into a data frame
-survived <- as.data.frame(cbind(mapa_have, mapa_rxy), stringsAsFactors = FALSE) 
-    
-# now read in the meta data
-meta <- read.table(system.file("data_files/MKHM2011_metadata.txt", package="inbredPermute", mustWork = T), header = TRUE, stringsAsFactors = FALSE, row.names = 1)
-
-# attach the meta data into the survived frame
-survived$paSex <- meta[survived$Pa, "Sex"]
-survived$maSex <- meta[survived$Ma, "Sex"]
-survived$paDate <- meta[survived$Pa, "SpawnDate"]
-survived$maDate <- meta[survived$Ma, "SpawnDate"] 
-    
-# now count up the number of offspring each pair had and record the date
-num_offs <- plyr::count(survived, vars = c("Pa", "Ma", "paDate"))
-    
-# now split that up by day:
-num_offs_by_day <- split(num_offs, f = num_offs$paDate)
-    
-# and just turn unique individuals on each day into numbers:
-nums_to_sim <- lapply(num_offs_by_day, function(x) {
-  x$Pa <- as.integer(as.factor(x$Pa))
-  x$Ma <- as.integer(as.factor(x$Ma))
-  x
-})
-    
-    
-    
-# now, make a list of all the males and females spawned on any given day
-spawner_lists <- split(meta, list(meta$SpawnDate, meta$Sex))
-    
-# note that we can get all the males spawned on 2/3/11 with this:
-# spawner_lists$`2/3/11.Male`
-    
-    
-# now, we make a simulation function that operates on a single day and 
-# takes the variables we have prepared above as arguments
-perm_a_day <- function(day, reps=100) {
-  
-  # here is the total number of offpring that came back from parents spawned on this day
-  tot_offs_this_day <- sum(nums_to_sim[[day]]$freq)
-  
-  # draw from fish spawned on that day
-  sim_ma <- lapply(1:reps, function(x) sample(rownames(spawner_lists[[ paste(day, "Female", sep=".") ]]),
-                   size = max(nums_to_sim[[day]]$Ma),
-                   replace = FALSE
-                   ))
-  sim_pa <- lapply(1:reps, function(x) sample(rownames(spawner_lists[[ paste(day, "Male", sep=".") ]]),
-                   size = max(nums_to_sim[[day]]$Pa),
-                   replace = FALSE
-                   ))
-  
-  idxs <- lapply(1:reps, function(x) cbind(Pa = rep(nums_to_sim[[day]]$Pa, nums_to_sim[[day]]$freq),
-                Ma = rep(nums_to_sim[[day]]$Ma, nums_to_sim[[day]]$freq)))
-  
-  tempmat <- do.call(rbind, lapply(1:length(idxs), function(x) cbind(sim_pa[[x]][idxs[[x]][, "Pa"]], sim_ma[[x]][idxs[[x]][, "Ma"]])))
-  
-  matrix(rxy[tempmat], nrow=tot_offs_this_day)
-}
-    
-    
-    
-# now we cycle over the days and do it for each days and get a list that we rbind
-# together, after which we have a matrix where the columns are the reps and the rows
-# are different simulated individuals and the values of individuals inbreeding 
-# coefficients.
-simmed_results <- do.call(rbind, lapply(names(nums_to_sim), function(day) perm_a_day(day, reps=10000)))
+    library(inbredPermute)
 ```
 
-At this juncture, we need to use the numbers in `nums_to_sim` to draw individuals
-(from meta) that were born on certain days and of certain sexes.  Then we can 
-extract the rxy values for those and make a null distribution.
+```
+## Loading required package: plyr
+```
 
+```r
+    simmat <- do_the_perms(kg_file = system.file("data_files/MKHM_kingroup_output.csv", package="inbredPermute", mustWork = T),
+                           trio_file = system.file("data_files/MKHM_trios.txt", package="inbredPermute", mustWork = T),
+                           meta_file = system.file("data_files/MKHM2011_metadata.txt", package="inbredPermute", mustWork = T),
+                           ItalianCommas = TRUE,
+                           REPS = 100  # you will want to do more in practice
+                           )
+    
+    simmat[1:10, 1:10]
+```
 
+```
+##                Reps
+## SimmedOffspring       1       2       3       4       5       6       7
+##              1  -0.0413 -0.2131 -0.3201  0.0855 -0.2790 -0.1911 -0.0233
+##              2  -0.0580 -0.2512  0.0008 -0.0883 -0.0946 -0.1339  0.1077
+##              3  -0.0580 -0.2512  0.0008 -0.0883 -0.0946 -0.1339  0.1077
+##              4  -0.0129  0.0089 -0.1236  0.0092 -0.0233  0.0890  0.0855
+##              5  -0.0129  0.0089 -0.1236  0.0092 -0.0233  0.0890  0.0855
+##              6   0.1126 -0.0792  0.0358 -0.0582  0.4861  0.0695 -0.1714
+##              7  -0.0666 -0.1197 -0.0139  0.0837  0.0850  0.2243 -0.0510
+##              8  -0.0666 -0.1197 -0.0139  0.0837  0.0850  0.2243 -0.0510
+##              9  -0.0666 -0.1197 -0.0139  0.0837  0.0850  0.2243 -0.0510
+##              10 -0.1197 -0.1189 -0.1197 -0.0139 -0.0980 -0.0472 -0.2271
+##                Reps
+## SimmedOffspring       8       9      10
+##              1  -0.1225 -0.1112 -0.1684
+##              2  -0.1048 -0.0129  0.5008
+##              3  -0.1048 -0.0129  0.5008
+##              4  -0.0194  0.0807 -0.1225
+##              5  -0.0194  0.0807 -0.1225
+##              6   0.0685 -0.0644 -0.0355
+##              7  -0.0326  0.1397 -0.0980
+##              8  -0.0326  0.1397 -0.0980
+##              9  -0.0326  0.1397 -0.0980
+##              10 -0.0893  0.0487 -0.0360
+```
 
 
 ## Terms 

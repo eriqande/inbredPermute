@@ -2,13 +2,13 @@
 #' function to do the permutations
 #' 
 #' @export
-do_the_perms <- function(kg_file, trio_file, meta_file, REPS = 1000) {
+do_the_perms <- function(kg_file, trio_file, meta_file, REPS = 1000, ItalianCommas = FALSE) {
   # read the rxy values
-  rxy <- read_kingroup_csv(system.file("data_files/MKHM_kingroup_output.csv", package="inbredPermute", mustWork = T), ItalianCommas = TRUE)
+  rxy <- read_kingroup_csv(kg_file, ItalianCommas = ItalianCommas)
   
   # make a matrix of pairs that produced offspring that we found
   # we make a matrix because we will use it to subset another matrix...
-  trios <- read.table(system.file("data_files/MKHM_trios.txt", package="inbredPermute", mustWork = T), header = T, stringsAsFactors=F)
+  trios <- read.table(trio_file, header = T, stringsAsFactors=F)
   
   # get their rxy values
   mapa <- as.matrix(cbind(trios$Pa, trios$Ma))  # names of observed parents
@@ -25,7 +25,7 @@ do_the_perms <- function(kg_file, trio_file, meta_file, REPS = 1000) {
   survived <- as.data.frame(cbind(mapa_have, mapa_rxy), stringsAsFactors = FALSE) 
   
   # now read in the meta data
-  meta <- read.table(system.file("data_files/MKHM2011_metadata.txt", package="inbredPermute", mustWork = T), header = TRUE, stringsAsFactors = FALSE, row.names = 1)
+  meta <- read.table(meta_file, header = TRUE, stringsAsFactors = FALSE, row.names = 1)
   
   # attach the meta data into the survived frame
   survived$paSex <- meta[survived$Pa, "Sex"]
