@@ -13,6 +13,8 @@ Roxygen: list(wrap = FALSE)
 Suggests:
     testthat,
     knitr
+Depends:
+    plyr
 VignetteBuilder: knitr
 Imports:
     
