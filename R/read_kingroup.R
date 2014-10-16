@@ -27,7 +27,7 @@ read_kingroup_csv <- function(file, ItalianCommas = FALSE)  {
   # if the Name of the individual ends with a 0 it screws things up.
   if(ItalianCommas == TRUE) {
     L[-1] <- gsub("-0, ", "-0ReplaceAsComma ", L[-1])  # these are crazy hacks because Kingroup sometimes reports things as identically 0  
-    L[-1] <- gsub(" 0, ", " 0ReplaceAsComma", L[-1])   # so we can't pull the commas off after those, because they are real...
+    L[-1] <- gsub(" 0, ", " 0ReplaceAsComma ", L[-1])   # so we can't pull the commas off after those, because they are real...
     L[-1] <- gsub("-0,", "-0.", L[-1])  
     L[-1] <- gsub(" 0,", " 0.", L[-1]) 
     L[-1] <- gsub("ReplaceAsComma", ".000,", L[-1])
