@@ -37,16 +37,42 @@ The basic idea here is that we should be able to proceed directly with two ingre
 Then, to run the function you would do something like:
 ```{r run-func}
     library(inbredPermute)
-    simmat <- do_the_perms(kg_file = system.file("data_files/MKHM_kingroup_output.csv", package="inbredPermute", mustWork = T),
+    do_perm_output <- do_the_perms(kg_file = system.file("data_files/MKHM_kingroup_output.csv", package="inbredPermute", mustWork = T),
                            trio_file = system.file("data_files/MKHM_trios.txt", package="inbredPermute", mustWork = T),
                            meta_file = system.file("data_files/MKHM2011_metadata.txt", package="inbredPermute", mustWork = T),
                            ItalianCommas = TRUE,
-                           REPS = 100  # you will want to do more in practice
+                           REPS = 1000  # you will want to do more in practice
                            )
     
-    simmat[1:10, 1:10]
+    do_perm_output[1:3]
+    head(do_perm_output$Obs)
+    do_perm_output$Simmed[1:10, 1:10]
 ```
 
+and here were are working on comparing each simulated distribution to the observed distribution of
+r_xy values:
+```{r comp-dist}
+
+# pass in a simulated vector of r_xy called y.
+# This does a Mann_Whitney U-test on those dsns.
+wilx_func <- function(y) unlist(wilcox.test(as.numeric(do_perm_output$Obs$mapa_rxy), y, alternative = "less")[c("p.value", "statistic")])
+
+wilx_tests <- t(apply(do_perm_output$Simmed, 2, wilx_func))
+hist(wilx_tests[, 1])  # clearly not much going on there.
+    
+# what if, instead we asked about the max inbreeding coeff?
+max_obs <- max(as.numeric(do_perm_output$Obs$mapa_rxy))
+# number of simmed inds with higher inbreeding than any observed
+gt_obs <- apply(do_perm_output$Simmed, 2, function(x) sum(x > max_obs))
+hist(gt_obs)
+mean(gt_obs == 0)  # this is a sort of "p-value"  
+    
+# finally, what if we look at the number of offspring with inbreeding coeff 
+# greater than 0.25?
+num_obs_gt_.25 <- sum(as.numeric(do_perm_output$Obs$mapa_rxy) > 0.25)
+sim_obs_gt_.25 <- apply(do_perm_output$Simmed, 2, function(x) sum(x > 0.25))
+
+```
 
 ## Terms 
 

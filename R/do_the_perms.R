@@ -21,8 +21,9 @@ do_the_perms <- function(kg_file, trio_file, meta_file, REPS = 1000, ItalianComm
   # and here we pick out their rxy's
   mapa_rxy <- rxy[mapa_have]
   
-  # put those into a data frame
-  survived <- as.data.frame(cbind(mapa_have, mapa_rxy), stringsAsFactors = FALSE) 
+  # put those into a data frame along with the kid names because it is good to carry
+  # that along
+  survived <- as.data.frame(Kid = as.numeric(Kid = trios$Kid[havem]), cbind(mapa_have, mapa_rxy), stringsAsFactors = FALSE) 
   
   # now read in the meta data
   meta <- read.table(meta_file, header = TRUE, stringsAsFactors = FALSE, row.names = 1)
@@ -90,5 +91,22 @@ do_the_perms <- function(kg_file, trio_file, meta_file, REPS = 1000, ItalianComm
   
   dimnames(ret) <- list(SimmedOffspring = 1:nrow(ret), Reps = 1:ncol(ret))
   
+  ret <- list(Obs = survived, Simmed = ret)  # what we will return after adding a bit more to it
+  
+  # now let's assess, for each simulation, how many of the rxy values are greater than the 
+  # max value in the obs
+  max_obs <- max(as.numeric(ret$Obs$mapa_rxy))
+  # number of simmed inds with higher inbreeding than any observed
+  gt_obs <- apply(ret$Simmed, 2, function(x) sum(x > max_obs))
+  num_greater_than_max_obs <- table(gt_obs)
+  mean(gt_obs == 0)  # this is a sort of "p-value"  
+  
+  ret <- c(list(max_obs_rxy = max_obs, 
+                num_greater_than_max_obs = num_greater_than_max_obs,
+                sortof.a.pvalue = mean(gt_obs == 0)),
+           ret)
+  
   ret
 }
+
+
